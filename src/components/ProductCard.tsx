@@ -22,8 +22,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <p className="text-2xl font-bold text-purple-600">₹{product.price}</p>
           <p className="text-sm text-gray-500 mt-1">{product.category}</p>
           <div className="mt-2">
-            <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">
-              {product.condition}
+            <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded capitalize">
+              {product.condition.replace('-', ' ')}
             </span>
           </div>
         </div>

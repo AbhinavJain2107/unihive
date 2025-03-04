@@ -1,9 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Store, PlusCircle, User, LogOut } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Store, PlusCircle, User, LogOut, MessageCircle, Shield } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
-export const Navbar = () => {
+interface NavbarProps {
+  isAdmin?: boolean;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ isAdmin = false }) => {
+  const location = useLocation();
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
@@ -18,11 +23,41 @@ export const Navbar = () => {
           </Link>
           
           <div className="flex items-center space-x-4">
-            <Link to="/new-listing" className="flex items-center space-x-1 hover:text-purple-200">
+            <Link 
+              to="/new-listing" 
+              className={`flex items-center space-x-1 hover:text-purple-200 ${
+                location.pathname === '/new-listing' ? 'text-purple-200' : ''
+              }`}
+            >
               <PlusCircle className="h-5 w-5" />
               <span>Sell</span>
             </Link>
-            <Link to="/profile" className="hover:text-purple-200">
+            <Link 
+              to="/messages" 
+              className={`flex items-center space-x-1 hover:text-purple-200 ${
+                location.pathname === '/messages' ? 'text-purple-200' : ''
+              }`}
+            >
+              <MessageCircle className="h-5 w-5" />
+              <span>Messages</span>
+            </Link>
+            {isAdmin && (
+              <Link 
+                to="/admin" 
+                className={`flex items-center space-x-1 hover:text-purple-200 ${
+                  location.pathname === '/admin' ? 'text-purple-200' : ''
+                }`}
+              >
+                <Shield className="h-5 w-5" />
+                <span>Admin</span>
+              </Link>
+            )}
+            <Link 
+              to="/profile" 
+              className={`hover:text-purple-200 ${
+                location.pathname === '/profile' ? 'text-purple-200' : ''
+              }`}
+            >
               <User className="h-5 w-5" />
             </Link>
             <button onClick={handleLogout} className="hover:text-purple-200">
