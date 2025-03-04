@@ -1,31 +1,10 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
-import { supabase, setupDatabase, initDatabaseFunctions } from './lib/supabase.ts';
+import { supabase } from './lib/supabase';
 
-// Initialize database
-const initDatabase = async () => {
+// Create necessary database tables and functions
+export const setupDatabase = async () => {
   try {
-    // First create the functions
-    await initDatabaseFunctions();
+    console.log('Setting up database...');
     
-    // Then use the functions to create tables
-    await setupDatabase();
-    
-    // Create tables directly if functions fail
-    await createTablesDirectly();
-    
-    // Ensure master admin exists
-    await ensureMasterAdmin();
-  } catch (error) {
-    console.error('Error initializing database:', error);
-  }
-};
-
-// Create tables directly if functions approach fails
-const createTablesDirectly = async () => {
-  try {
     // Create profiles table
     await supabase.query(`
       CREATE TABLE IF NOT EXISTS profiles (
@@ -245,42 +224,47 @@ const createTablesDirectly = async () => {
       END $$;
     `);
     
-    console.log('Tables created directly');
+    console.log('Database setup complete');
   } catch (error) {
-    console.error('Error creating tables directly:', error);
+    console.error('Error setting up database:', error);
   }
 };
 
 // Ensure master admin exists
-const ensureMasterAdmin = async () => {
+export const ensureMasterAdmin = async () => {
   try {
-    // Get the user ID from auth.users
-    const { data: userData, error: userError } = await supabase.auth.admin.listUsers();
+    console.log('Ensuring master admin exists...');
     
-    if (userError) {
-      console.error('Error listing users:', userError);
+    // Get all users
+    const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
+    
+    if (authError) {
+      console.error('Error listing users:', authError);
       return;
     }
     
     // Find the master admin user
-    const masterAdminUser = userData?.users?.find(user => user.email === '21bcs6987@cuchd.in');
+    const masterAdminEmail = '21bcs6987@cuchd.in';
+    const masterAdminUser = authData?.users?.find(user => user.email === masterAdminEmail);
     
     if (!masterAdminUser) {
-      console.log('Master admin user not found');
+      console.log(`Master admin user with email ${masterAdminEmail} not found`);
       return;
     }
+    
+    const userId = masterAdminUser.id;
     
     // Check if user exists in profiles
     const { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('id')
-      .eq('id', masterAdminUser.id)
+      .eq('id', userId)
       .single();
     
     // If profile doesn't exist, create it
     if (profileError && profileError.code === 'PGRST116') {
       await supabase.from('profiles').insert({
-        id: masterAdminUser.id,
+        id: userId,
         username: '21bcs6987',
         full_name: '21bcs6987',
         course: 'Not specified',
@@ -294,9 +278,9 @@ const ensureMasterAdmin = async () => {
     const { error: adminError } = await supabase
       .from('admins')
       .upsert({
-        id: masterAdminUser.id,
+        id: userId,
         is_master: true,
-        created_by: masterAdminUser.id,
+        created_by: userId,
         created_at: new Date().toISOString()
       });
     
@@ -310,12 +294,3 @@ const ensureMasterAdmin = async () => {
     console.error('Error ensuring master admin:', error);
   }
 };
-
-// Initialize database
-initDatabase();
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
