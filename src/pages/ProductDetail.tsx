@@ -33,7 +33,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ session }) => {
           .from('products')
           .select('*')
           .eq('id', id)
-          .maybesingle();
+          .single();
 
         if (productError) throw productError;
         if (!productData) throw new Error('Product not found');
@@ -45,7 +45,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ session }) => {
           .from('profiles')
           .select('*')
           .eq('id', productData.seller_id)
-          .maybesingle();
+          .single();
 
         if (sellerError) throw sellerError;
         setSeller(sellerData);
@@ -58,7 +58,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ session }) => {
             .eq('product_id', id)
             .eq('buyer_id', session.user.id)
             .eq('seller_id', productData.seller_id)
-            .maybesingle();
+            .single();
 
           if (!chatError && chatData) {
             setRequestSent(true);
@@ -99,7 +99,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ session }) => {
           status: 'pending'
         })
         .select()
-        .maybesingle();
+        .single();
 
       if (error) throw error;
 
