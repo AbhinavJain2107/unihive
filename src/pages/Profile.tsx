@@ -40,7 +40,7 @@ export const Profile: React.FC<ProfileProps> = ({ session }) => {
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
-        .maybemaybesingle();
+        .single();
 
       if (error) throw error;
 
@@ -109,7 +109,7 @@ export const Profile: React.FC<ProfileProps> = ({ session }) => {
           .select('id')
           .eq('username', username)
           .neq('id', session.user.id)
-          .maybesingle();
+          .single();
 
         if (existingUser) {
           setError('Username is already taken');
