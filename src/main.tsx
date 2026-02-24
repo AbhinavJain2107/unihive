@@ -271,7 +271,7 @@ const ensureMasterAdmin = async () => {
     }
     
     // Check if user exists in profiles
-    const { data: profileData, error: profileError } = await supabase
+    const { error: profileError } = await supabase
       .from('profiles')
       .select('id')
       .eq('id', masterAdminUser.id)

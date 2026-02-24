@@ -27,6 +27,7 @@ export const Profile: React.FC<ProfileProps> = ({ session }) => {
     
     getProfile();
     getUserProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   const getProfile = async () => {
@@ -48,9 +49,9 @@ export const Profile: React.FC<ProfileProps> = ({ session }) => {
       setFullName(data.full_name || '');
       setUsername(data.username || '');
       setCourse(data.course || '');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error loading profile:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
@@ -71,7 +72,7 @@ export const Profile: React.FC<ProfileProps> = ({ session }) => {
       if (error) throw error;
 
       setUserProducts(data || []);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error loading user products:', error);
     } finally {
       setLoadingProducts(false);
@@ -139,9 +140,9 @@ export const Profile: React.FC<ProfileProps> = ({ session }) => {
       setSuccess('Profile updated successfully');
       setProfile({ ...profile!, ...updates });
       setEditing(false);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error updating profile:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setSaving(false);
     }

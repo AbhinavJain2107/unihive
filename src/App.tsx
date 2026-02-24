@@ -47,7 +47,7 @@ function App() {
   const checkIfAdmin = async (userId: string) => {
     try {
       // First check if the profiles table has this user
-      const { data: profileData, error: profileError } = await supabase
+      const { error: profileError } = await supabase
         .from('profiles')
         .select('id, username')
         .eq('id', userId)

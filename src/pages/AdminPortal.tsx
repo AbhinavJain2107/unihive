@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { ArrowLeft, UserPlus, Shield, ShieldOff, Trash, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { UserPlus, Shield, ShieldOff, Trash, AlertTriangle, CheckCircle } from 'lucide-react';
 import type { Session } from '@supabase/supabase-js';
 import type { Admin, Profile, Product } from '../types';
 
@@ -25,6 +25,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
     fetchAdmins();
     fetchUsers();
     fetchProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.user.id]);
 
   const checkMasterAdmin = async () => {
@@ -42,8 +43,8 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
       }
       
       setIsMasterAdmin(data?.is_master || false);
-    } catch (error: any) {
-      console.error('Error checking master admin status:', error);
+    } catch (err) {
+      console.error('Error checking master admin status:', err);
       setIsMasterAdmin(false);
     }
   };
@@ -75,9 +76,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
       );
 
       setAdmins(adminsWithProfiles);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error fetching admins:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
@@ -93,9 +94,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
 
       if (error) throw error;
       setUsers(data || []);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error fetching users:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
@@ -128,9 +129,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
       );
 
       setProducts(productsWithSellers);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error fetching products:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
@@ -172,7 +173,7 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
       }
 
       // Check if user is already an admin
-      const { data: existingAdmin, error: adminCheckError } = await supabase
+      const { data: existingAdmin } = await supabase
         .from('admins')
         .select('id')
         .eq('id', userData.id)
@@ -197,9 +198,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
       setSuccess(`Admin ${newAdminEmail} added successfully`);
       setNewAdminEmail('');
       fetchAdmins();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error adding admin:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setAddingAdmin(false);
     }
@@ -220,9 +221,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
 
       setSuccess('Admin promoted to master admin successfully');
       fetchAdmins();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error promoting admin:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
@@ -251,9 +252,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
 
       setSuccess('Master admin demoted to regular admin successfully');
       fetchAdmins();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error demoting admin:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
@@ -286,9 +287,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
 
       setSuccess('Admin removed successfully');
       fetchAdmins();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error removing admin:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
@@ -309,9 +310,9 @@ export const AdminPortal: React.FC<AdminPortalProps> = ({ session }) => {
 
       setSuccess('Product deleted successfully');
       fetchProducts();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error deleting product:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
