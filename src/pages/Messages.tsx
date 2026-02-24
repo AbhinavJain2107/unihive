@@ -71,9 +71,9 @@ export const Messages: React.FC<MessagesProps> = ({ session }) => {
             setSelectedChat(validChats[0]);
           }
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error fetching chats:', error);
-        setError(error.message);
+        setError(error instanceof Error ? error.message : String(error));
       } finally {
         setLoading(false);
       }
@@ -91,6 +91,7 @@ export const Messages: React.FC<MessagesProps> = ({ session }) => {
     return () => {
       supabase.removeChannel(chatSubscription);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.user.id]);
 
   // Fetch messages for the selected chat
@@ -110,9 +111,9 @@ export const Messages: React.FC<MessagesProps> = ({ session }) => {
 
         if (error) throw error;
         setMessages(data || []);
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error fetching messages:', error);
-        setError(error.message);
+        setError(error instanceof Error ? error.message : String(error));
       } finally {
         setLoading(false);
       }
@@ -157,9 +158,9 @@ export const Messages: React.FC<MessagesProps> = ({ session }) => {
 
       if (error) throw error;
       setNewMessage('');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error sending message:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setSendingMessage(false);
     }
@@ -191,9 +192,9 @@ export const Messages: React.FC<MessagesProps> = ({ session }) => {
       setChats(chats.map(chat =>
         chat.id === selectedChat.id ? { ...chat, status } : chat
       ));
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error updating chat status:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }

@@ -65,9 +65,9 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ session }) => {
             setRequestStatus(chatData.status as 'pending' | 'accepted' | 'rejected');
           }
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error('Error fetching product details:', error);
-        setError(error.message);
+        setError(error instanceof Error ? error.message : String(error));
       } finally {
         setLoading(false);
       }
@@ -90,7 +90,7 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ session }) => {
       }
 
       // Create a new chat request
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('chats')
         .insert({
           product_id: product.id,
@@ -105,9 +105,9 @@ export const ProductDetail: React.FC<ProductDetailProps> = ({ session }) => {
 
       setRequestSent(true);
       setRequestStatus('pending');
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error sending buy request:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setSendingRequest(false);
     }
