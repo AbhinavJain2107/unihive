@@ -9,7 +9,7 @@ interface HomePageProps {
   session: Session;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ session }) => {
+export const HomePage: React.FC<HomePageProps> = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -40,9 +40,9 @@ export const HomePage: React.FC<HomePageProps> = ({ session }) => {
         const uniqueCategories = Array.from(new Set(data.map(product => product.category)));
         setCategories(uniqueCategories);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error loading products:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }

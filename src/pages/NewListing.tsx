@@ -56,7 +56,7 @@ export const NewListing: React.FC<NewListingProps> = ({ session }) => {
 
       // Upload file to Supabase Storage
       const fileName = `${Math.random().toString(36).substring(2)}-${file.name}`;
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('product-images')
         .upload(`public/${fileName}`, file);
 
@@ -68,9 +68,9 @@ export const NewListing: React.FC<NewListingProps> = ({ session }) => {
         .getPublicUrl(`public/${fileName}`);
 
       setImageUrl(publicUrlData.publicUrl);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error uploading image:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setUploading(false);
     }
@@ -120,9 +120,9 @@ export const NewListing: React.FC<NewListingProps> = ({ session }) => {
 
       // Redirect to product page
       navigate(`/product/${data.id}`);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error creating listing:', error);
-      setError(error.message);
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
